@@ -1,0 +1,12 @@
+{
+  "uid": "annad_card",
+  "type": "card",
+  "config": {
+    "name": "Synchronisation SAV",
+    "location": "crm.record.sidebar",
+    "entrypoint": "/app/cards/SyncCard.tsx",
+    "objectTypes": [
+      "tickets"
+    ]
+  }
+}

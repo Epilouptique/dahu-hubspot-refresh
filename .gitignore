@@ -1,0 +1,20 @@
+# HubSpot config file (contient la clé d'accès personnelle pat-eu1)
+hubspot.config.yml
+
+# Contexte interne, jamais poussé sur GitHub
+CLAUDE.md
+
+# Documentation générée par le CLI/template HubSpot : ignorée plutôt que
+# supprimée, car régénérée à chaque `hs project add` ou mise à jour du CLI.
+AGENTS.md
+HUBSPOT_PROJECTS.md
+HUBSPOT_CARDS.md
+
+# Archives
+*.zip
+
+# Dépendances et artefacts de build
+node_modules/
+dist/
+.hs-temp/
+*.log

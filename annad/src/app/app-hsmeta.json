@@ -1,0 +1,31 @@
+{
+  "uid": "annad_app",
+  "type": "app",
+  "config": {
+    "description": "Rafraîchit automatiquement les fiches ticket ouvertes lorsqu'un workflow ou une écriture API en modifie le statut ou le pipeline, sans rechargement de page.",
+    "name": "annad-App",
+    "distribution": "private",
+    "auth": {
+      "type": "static",
+      "requiredScopes": [
+        "oauth",
+        "tickets"
+      ],
+      "optionalScopes": [],
+      "conditionallyRequiredScopes": []
+    },
+    "permittedUrls": {
+      "fetch": [
+        "https://api.hubapi.com"
+      ],
+      "iframe": [],
+      "img": []
+    },
+    "support": {
+      "supportEmail": "contact@dahu-concept.fr",
+      "documentationUrl": "https://github.com/Epilouptique/dahu-hubspot-refresh",
+      "supportUrl": "https://dahu-concept.fr",
+      "supportPhone": ""
+    }
+  }
+}
