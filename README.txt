@@ -3,7 +3,7 @@ Contributors: Hugo Vial-Jaime
 Tags: hubspot, crm, ui-extensions, refresh, workflow
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,12 +18,30 @@ value until they manually reload the page.
 
 Dahu HubSpot Refresh solves this with a small, self-contained UI extension
 card. A buffer property on the record is touched every time something changes
-it; the card polls that single property and calls refreshObjectProperties() as
-soon as its value differs from the previous one. Displayed properties update in
-place, with no page reload and no user action.
+it; the card polls that single property and reacts as soon as its value differs
+from the previous one.
 
-The card is deliberately content-free: it renders one discreet line of text and
-never displays business data. Its only job is to keep the record in sync.
+Two things then happen. refreshObjectProperties() is called, which updates in
+place everything that falls within its reach. Because that reach turns out to be
+narrower than the record itself, the card also surfaces a Refresh button, shown
+only while a change is pending. One click reloads the record and guarantees a
+correct view.
+
+The card never displays business data: while nothing has changed, it renders a
+single discreet line of text. Its only job is to keep the record in sync.
+
+Why the button is not automatic: reloading the page on its own would be simpler,
+and wrong. A user may be halfway through typing a note in another panel of the
+same record, and a reload triggered behind their back would discard it. The card
+therefore detects automatically, and reloads only on request.
+
+A known limitation: refreshObjectProperties() does not reach every part of a
+record. In testing, a sidebar section kept displaying a stale enumeration
+property across four consecutive refresh cycles, while the stored value was
+correct; a fresh navigation to the same record showed it immediately. The action
+is still worth calling, since it costs nothing and does update what it covers,
+but it cannot be relied on alone. This is the entire reason the manual button
+exists.
 
 Why polling and not the native event: the SDK exposes onCrmPropertiesUpdate,
 which looks like the natural fit. It is not. HubSpot only emits that event for
@@ -35,8 +53,11 @@ when changes originate from automation rather than manual input.
 == Features ==
 
 * Refreshes an open CRM record in place, without reloading the page
+* Falls back to a one-click Refresh button, shown only when a change is pending
+* Never reloads on its own, so in-progress input elsewhere on the record is safe
 * Detects changes made by workflows, integrations and external API writes
 * Event-source agnostic: anything able to write one property can trigger it
+* Degrades gracefully if the SDK exposes no reload action, alerting instead
 * Configurable poll interval through a single constant
 * Silent by default, with a DEBUG flag that re-enables full lifecycle logging
 * Resilient polling: a failed request is logged and the next tick retries
@@ -78,13 +99,23 @@ Settings > Objects > Tickets > Customize record preview.
 
 * SIGNAL_PROPERTY (default dahu_refresh_signal) - internal name of the buffer
   property
-* POLL_INTERVAL_MS (default 5000) - poll period, in milliseconds
+* POLL_INTERVAL_MS (default 2000) - poll period, in milliseconds
 * DEBUG (default false) - enables [dahu-sync] lifecycle logging
 
 To target another object type, change objectTypes in card-hsmeta.json and
 adjust the scopes in src/app/app-hsmeta.json accordingly.
 
 == Changelog ==
+
+= 1.1.0 =
+* Manual Refresh button, shown only while a detected change is pending
+* refreshObjectProperties() alone proved insufficient: it leaves parts of the
+  record stale even when called repeatedly with the tab in the foreground
+* Reload is never automatic, to protect in-progress input elsewhere on the record
+* Defensive fallback to an alert when the SDK exposes no reload action
+* Poll period lowered from 5000 ms to 2000 ms so the button appears promptly
+* Removed the timer-throttling workarounds (deferred second call, tick-drift
+  instrumentation): the theory behind them was disproved by testing
 
 = 1.0.0 =
 * Initial release
